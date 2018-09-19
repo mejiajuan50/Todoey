@@ -78,7 +78,9 @@ class TodoListViewController: UITableViewController {
         
         let alert = UIAlertController(title: "Add New Todey Item", message: "", preferredStyle: .alert)
         
-        let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
+        let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
+        
+        let add = UIAlertAction(title: "Add Item", style: .default) { (action) in
             
             //Appends new item to array and reloads the table view with new array data
             
@@ -99,7 +101,8 @@ class TodoListViewController: UITableViewController {
             textField = alertTextField
         }
         
-        alert.addAction(action)
+        alert.addAction(cancel)
+        alert.addAction(add)
         
         present(alert, animated: true, completion: nil)
     }
