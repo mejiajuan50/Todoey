@@ -18,9 +18,10 @@ class CategoryViewController: SwipeTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         loadCategories()
-        tableView.separatorStyle = .none
+//        guard let navBar = navigationController?.navigationBar else {fatalError("Navigation controller does not exist.")}
+//        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : ContrastColorOf(navBar.tintColor, returnFlat: true)]
+//        navBar.tintColor = ContrastColorOf(UIColor(hexString: "1D9BF6") ?? UIColor.flatWhite, returnFlat: true)
     }
     
     //MARK: - TableView DataSource Methods
@@ -34,11 +35,16 @@ class CategoryViewController: SwipeTableViewController {
         
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
-        cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added Yet"
+        if let category = categories?[indexPath.row]{
+            
+            cell.textLabel?.text = category.name 
+            
+            guard let categoryColor = UIColor(hexString: category.color) else {fatalError()}
+            
+            cell.backgroundColor = categoryColor
+            cell.textLabel?.textColor = ContrastColorOf(categoryColor, returnFlat: true)
+        }
         
-        cell.backgroundColor = UIColor.randomFlat
-        
-
         return cell
     }
     
@@ -89,6 +95,7 @@ class CategoryViewController: SwipeTableViewController {
         if let categoryForDeletion = self.categories?[indexPath.row] {
             do {
                 try self.realm.write {
+                    self.realm.delete(categoryForDeletion.items)
                     self.realm.delete(categoryForDeletion)
                 }
             } catch {
@@ -114,7 +121,15 @@ class CategoryViewController: SwipeTableViewController {
             //Appends new category to array and reloads the table view with new array data
             
             let newCategory = Category()
-            newCategory.name = textField.text!
+            
+            if !(textField.text?.isEmpty)! {
+                newCategory.name = textField.text!
+            }
+            else {
+                print("Category needs to have a name!")
+                return
+            }
+            newCategory.color = UIColor.randomFlat.hexValue()
 
             self.save(category: newCategory)
             
