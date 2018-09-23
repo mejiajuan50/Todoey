@@ -9,6 +9,7 @@
 import UIKit
 import RealmSwift
 import ChameleonFramework
+import SVProgressHUD
 
 class TodoListViewController: SwipeTableViewController {
     
@@ -133,20 +134,27 @@ class TodoListViewController: SwipeTableViewController {
             
             //Appends new item to array and reloads the table view with new array data
             
-            if let currentCategory = self.selectedCategory{
-                do {
-                    try self.realm.write {
-                        let newItem = Item()
-                        newItem.title = textField.text!
-                        newItem.dateCreated = Date()
-                        currentCategory.items.append(newItem)
+            if(textField.text != ""){
+                if let currentCategory = self.selectedCategory{
+                    do {
+                        try self.realm.write {
+                            let newItem = Item()
+                            newItem.title = textField.text!
+                            newItem.dateCreated = Date()
+                            currentCategory.items.append(newItem)
+                        }
+                    }
+                    catch {
+                        print("Error saving new items, \(error)")
                     }
                 }
-                catch {
-                    print("Error saving new items, \(error)")
-                }
             }
-            
+            else {
+                SVProgressHUD.showError(withStatus: "Please add item name")
+                SVProgressHUD.dismiss(withDelay: 1)
+                return
+            }
+
             self.tableView.reloadData()
         }
         

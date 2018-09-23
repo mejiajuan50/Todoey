@@ -9,6 +9,7 @@
 import UIKit
 import RealmSwift
 import ChameleonFramework
+import SVProgressHUD
 
 class CategoryViewController: SwipeTableViewController {
     
@@ -19,9 +20,6 @@ class CategoryViewController: SwipeTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadCategories()
-//        guard let navBar = navigationController?.navigationBar else {fatalError("Navigation controller does not exist.")}
-//        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : ContrastColorOf(navBar.tintColor, returnFlat: true)]
-//        navBar.tintColor = ContrastColorOf(UIColor(hexString: "1D9BF6") ?? UIColor.flatWhite, returnFlat: true)
     }
     
     //MARK: - TableView DataSource Methods
@@ -82,8 +80,8 @@ class CategoryViewController: SwipeTableViewController {
     
     func loadCategories() {
         
-        categories = realm.objects(Category.self)
-
+        categories = realm.objects(Category.self).sorted(byKeyPath: "name", ascending: true)
+        
         tableView.reloadData()
 
     }
@@ -124,15 +122,14 @@ class CategoryViewController: SwipeTableViewController {
             
             if !(textField.text?.isEmpty)! {
                 newCategory.name = textField.text!
+                newCategory.color = UIColor.randomFlat.hexValue()
+                
+                self.save(category: newCategory)
             }
             else {
-                print("Category needs to have a name!")
-                return
+                SVProgressHUD.showError(withStatus: "Please add category name")
+                SVProgressHUD.dismiss(withDelay: 1)
             }
-            newCategory.color = UIColor.randomFlat.hexValue()
-
-            self.save(category: newCategory)
-            
         }
         
         alert.addAction(cancel)
