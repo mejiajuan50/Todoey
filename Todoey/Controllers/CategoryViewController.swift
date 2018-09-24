@@ -17,8 +17,16 @@ class CategoryViewController: SwipeTableViewController {
     
     var categories : Results<Category>?
     
+    let colorArray = ["6ABB72", "3ABB9D", "4DA664", "2CA786",
+                      "5CADCF", "3585C5", "4590B6", "2F6CAD", "485675", "29334D",
+                      "9069B5", "533D7F",
+                      "F2D46F", "F7C23E",
+                      "F79E3D", "EE7841",
+                      "E66B5B", "CC4846", "DC5047", "B33234"]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        updateNavBar(withHexcode: FlatWhite().hexValue())
         loadCategories()
     }
     
@@ -119,11 +127,12 @@ class CategoryViewController: SwipeTableViewController {
             //Appends new category to array and reloads the table view with new array data
             
             let newCategory = Category()
+            let random = Int(arc4random_uniform(20))
             
             if !(textField.text?.isEmpty)! {
                 newCategory.name = textField.text!
-                newCategory.color = UIColor.randomFlat.hexValue()
-                
+                newCategory.color = self.colorArray[random]
+            
                 self.save(category: newCategory)
             }
             else {
@@ -144,5 +153,22 @@ class CategoryViewController: SwipeTableViewController {
     
     }
     
+    // MARK - Nav Bar Setup Methods
+    
+    func updateNavBar(withHexcode colorHexCode:String) {
+        guard let navBar = navigationController?.navigationBar else {fatalError("Navigation Controller does not exist.")}
+        
+        guard let navBarColor = UIColor(hexString: colorHexCode) else {fatalError()}
+        
+        navBar.barTintColor = navBarColor
+        
+        navBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+        
+        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : ContrastColorOf(navBarColor, returnFlat: true)]
+        
+        navBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : ContrastColorOf(navBarColor, returnFlat: true)]
+    }
+    
 }
+
 

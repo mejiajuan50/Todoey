@@ -43,7 +43,7 @@ class TodoListViewController: SwipeTableViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         
-        updateNavBar(withHexcode: "1D9BF6")
+        updateNavBar(withHexcode: FlatWhite().hexValue())
     }
     
     // MARK - Nav Bar Setup Methods
@@ -78,15 +78,18 @@ class TodoListViewController: SwipeTableViewController {
             
             cell.textLabel?.text = item.title
      
-            if let color = UIColor(hexString: selectedCategory!.color)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(todoItems!.count)) {
+            if let color = UIColor(hexString: selectedCategory!.color)?.darken(byPercentage: (CGFloat(indexPath.row) / CGFloat(todoItems!.count))/2.0) {
+
                 cell.backgroundColor = color
                 cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+                cell.tintColor = ContrastColorOf(color, returnFlat: true)
             }
 
             //Ternary operator ==>
             // value = condition ? valueIfTrue : ValueIfFalse
             
             cell.accessoryType = item.done ? .checkmark : .none
+            
         }
         else {
             cell.textLabel?.text = "No Items added"
